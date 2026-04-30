@@ -126,6 +126,18 @@ class HighDefDigestScraper(BaseScraper):
                 if rows:
                     parts.append("<table>" + "".join(rows) + "</table>")
 
+        # Tech specs
+        tech = review_div.select_one("div.tech-details-card")
+        if tech:
+            parts.append("<h3>Tech Specs</h3>")
+            for spec in tech.select("div.spec"):
+                spans = spec.find_all("span")
+                if len(spans) >= 2:
+                    label = spans[0].get_text(strip=True)
+                    value = spans[1].get_text(strip=True)
+                    if label and value:
+                        parts.append(f"<p><strong>{label}</strong> {value}</p>")
+
         parts.append("<hr />")
 
         # Review sections (Storyline, Video, Audio, Special Features)
@@ -143,18 +155,6 @@ class HighDefDigestScraper(BaseScraper):
                 parts.append(str(review_text))
 
         parts.append("<hr />")
-
-        # Tech specs
-        tech = review_div.select_one("div.tech-details-card")
-        if tech:
-            parts.append("<h3>Tech Specs</h3>")
-            for spec in tech.select("div.spec"):
-                spans = spec.find_all("span")
-                if len(spans) >= 2:
-                    label = spans[0].get_text(strip=True)
-                    value = spans[1].get_text(strip=True)
-                    if label and value:
-                        parts.append(f"<p><strong>{label}</strong> {value}</p>")
 
         parts.append("</div>")
         return "\n".join(parts)
