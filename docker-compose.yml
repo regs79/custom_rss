@@ -1,8 +1,9 @@
 services:
   custom-rss:
+    container_name: custom-rss
     build: .
     ports:
-      - "8000:8000"
+      - "9000:8000"
     volumes:
       - ./cache:/app/cache
     restart: unless-stopped
