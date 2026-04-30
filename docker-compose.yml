@@ -1,0 +1,8 @@
+services:
+  custom-rss:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./cache:/app/cache
+    restart: unless-stopped

@@ -1,0 +1,5 @@
+cache/
+feed.xml
+__pycache__/
+*.pyc
+.env

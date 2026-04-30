@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://ultrahd.highdefdigest.com/reviews.html\")",
+      "Bash(curl -s \"https://ultrahd.highdefdigest.com/156388/highest2lowest4kultrahdbluray.html\")",
+      "Bash(grep -v \"^[[:space:]]*$\")"
+    ]
+  }
+}
