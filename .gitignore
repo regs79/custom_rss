@@ -1,5 +1,7 @@
 cache/
 feed.xml
 __pycache__/
+.claude/
+.build-cache/
 *.pyc
 .env
