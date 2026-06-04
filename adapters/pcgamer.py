@@ -185,19 +185,25 @@ class PcgamerScraper(BaseScraper):
             except (json.JSONDecodeError, AttributeError):
                 continue
 
-        # Extract image from meta tags if not in RSS
-        image = item.get("image", "")
-        if not image:
-            for meta in soup.find_all("meta"):
-                if meta.get("property") == "og:image":
-                    image = meta.get("content", "")
-                    break
+        # Extract hero image from page
+        hero_img = soup.find("img", class_="hero-image")
+        image_url = hero_img.get("src", "") if hero_img else ""
+
+        # Fallback: extract image from meta tags if not in RSS or no hero image
+        if not image_url:
+            image_url = item.get("image", "")
+            if not image_url:
+                for meta in soup.find_all("meta"):
+                    if meta.get("property") == "og:image":
+                        image_url = meta.get("content", "")
+                        break
 
         return {
             "title": item.get("title", "") or self._extract_title(soup),
             "date": date,
             "author": author,
             "content": content_html,
+            "image": image_url,
         }
 
     def build_feed(self, output: str | None = None, limit: int | None = None) -> str:
@@ -241,7 +247,17 @@ class PcgamerScraper(BaseScraper):
             if detail.get("summary"):
                 fe.summary(detail["summary"])
 
+            if detail.get("image"):
+                fe.link(href=detail["image"], rel="enclosure")
+
         xml = fg.atom_str(pretty=True).decode()
+
+        # feedgen strips custom rel attributes; restore enclosure rel for CDN image links
+        xml = re.sub(
+            r'(<link href="(https://cdn\.mos\.cms\.futurecdn\.net/[^\"]+)"/?>)',
+            r'<link rel="enclosure" href="\2"/>',
+            xml,
+        )
         if output:
             Path(output).write_text(xml, encoding="utf-8")
             print(f"Written to {output}")

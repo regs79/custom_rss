@@ -48,13 +48,21 @@
 - **Date parsing**: custom regex for "Month day, Year" format
 - **Ratings**: Font Awesome icons, parse class names (`fa-solid`, `fa-star-half-stroke`)
 
-## Common patterns
+## Atom feed — enclosure links
 
-- Use `httpx` with `HEADERS` for fetching
-- Cache HTML files in `cache/` directory (MD5-hashed by URL)
-- Feed URL is never cached (so new content appears immediately)
-- `build_feed()` default in `BaseScraper` works for HTML listing pages; override when source is RSS XML
-- Content goes in `<content type="html">` — feedgen handles XML escaping automatically
+- feedgen strips custom `rel` attributes from `<link>` elements
+- To add `<link rel="enclosure" href="..."/>` in Atom, add a plain link then post-process:
+  ```python
+  if detail.get("image"):
+      fe.link(href=detail["image"], rel="enclosure")  # rel stripped by feedgen
+  
+  xml = fg.atom_str(pretty=True).decode()
+  xml = re.sub(
+      r'(<link href="(https://cdn\.mos\.cms\.futurecdn\.net/[^\"]+)"/?>)',
+      r'<link rel="enclosure" href="\2"/>',
+      xml,
+  )
+  ```
 - Use `BeautifulSoup(resp.text, "lxml")` for HTML, `BeautifulSoup(resp.text, "xml")` for RSS
 
 ## Testing
