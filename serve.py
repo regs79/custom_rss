@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from fastapi.responses import Response
 
 from adapters.highdefdigest import HighDefDigestScraper
+from adapters.pcgamer import PcgamerScraper
 
 app = FastAPI()
 
@@ -20,6 +21,10 @@ FEEDS = {
     "hdd-uhd": (
         HighDefDigestScraper,
         "https://ultrahd.highdefdigest.com/reviews.html",
+    ),
+    "pcgamer-news": (
+        PcgamerScraper,
+        "https://www.pcgamer.com/feeds/articletype/news/",
     ),
 }
 
